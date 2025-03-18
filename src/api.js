@@ -313,7 +313,7 @@ class DICOMwebClient {
           const chunk = file.slice(offset, offset + CHUNK_SIZE);
           offset += CHUNK_SIZE;
 
-          xhr.send(chunk); // 청크 단위로 전송
+          request.send(chunk); // 청크 단위로 전송
           console.log(`Sent chunk: ${offset}/${file.size}`);
 
           // 다음 청크를 보낼 때 약간의 딜레이 추가 (서버가 처리할 시간 고려)
