@@ -298,9 +298,31 @@ class DICOMwebClient {
           request.withCredentials = true;
         }
       }
-
+      const file = options.data
       if ('data' in options) {
-        request.send(options.data);
+
+        const CHUNK_SIZE = 1024 * 1; // 1MB
+        let offset = 0;
+
+        function sendNextChunk() {
+          if (offset >= file.size) {
+            console.log("Upload finished!");
+            return;
+          }
+
+          const chunk = file.slice(offset, offset + CHUNK_SIZE);
+          offset += CHUNK_SIZE;
+
+          xhr.send(chunk); // 청크 단위로 전송
+          console.log(`Sent chunk: ${offset}/${file.size}`);
+
+          // 다음 청크를 보낼 때 약간의 딜레이 추가 (서버가 처리할 시간 고려)
+          setTimeout(sendNextChunk, 100);
+        }
+
+        sendNextChunk(); // 첫 번째 청크 전송 시작
+
+        // request.send(options.data);
       } else {
         request.send();
       }
