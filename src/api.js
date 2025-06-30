@@ -41,7 +41,8 @@ const getRequestOptions = (request = {}) => ({
     instance: request.instance || new XMLHttpRequest(),
     progressCallback: request.progressCallback ||  false,
     withCredentials: request.withCredentials || false,
-    responseType: request.responseType
+    responseType: request.responseType,
+    upload: request.upload || false,
 })
 
 const getFirstResult = result => result[0];
@@ -295,11 +296,15 @@ class DICOMwebClient {
           }
         }
       };
-
       // Event triggered while download progresses
       if (typeof request.progressCallback === 'function') {
         requestInstance.onprogress = request.progressCallback;
       }
+
+      if (typeof request.upload.onprogress === 'function') {
+        requestInstance.upload.onprogress = request.upload.onprogress;
+      }
+
 
       if (requestHooks && areValidRequestHooks(requestHooks)) {
         const combinedHeaders = Object.assign({}, headers, this.headers);
